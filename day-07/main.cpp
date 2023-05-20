@@ -7,15 +7,15 @@ typedef struct Tree_Node {
   string name;
   unsigned int size = 0;
   vector<Tree_Node> children;
-  Tree_Node *parent;
+  Tree_Node* parent;
 } Tree_Node;
 
 class Tree {
-private:
-  Tree_Node *current;
+ private:
+  Tree_Node* current;
 
   void show_dir_content(Tree_Node curr, unsigned int indent) {
-    for (auto &&i : curr.children) {
+    for (auto&& i : curr.children) {
 
       cout << string(indent, ' ') << "- " << i.name << " ("
            << (i.isDir ? "dir " : "file ") << i.size << ")\n";
@@ -25,7 +25,7 @@ private:
     }
   }
 
-public:
+ public:
   Tree_Node root;
 
   Tree() {
@@ -41,19 +41,20 @@ public:
     current = current->parent;
   }
 
-  void addChildDir(string name) {
+  void addChildDir(const string& name) {
     // cout << "adding child directory " << name << endl;
     Tree_Node child;
     child.name = name;
     child.isDir = true;
     child.parent = current;
+    child.size = 0;
     current->children.push_back(child);
     this->current = &current->children.at(current->children.size() - 1);
   }
 
   void show() { show_dir_content(root, 0); }
 
-  void addChildFile(string name, unsigned int size) {
+  void addChildFile(const string& name, unsigned int size) {
     // cout << "adding child file " << name << endl;
 
     Tree_Node child;
@@ -77,7 +78,7 @@ unsigned int smaller_than_100000(Tree_Node x) {
 
   unsigned int delta = (x.size <= 100000) ? x.size : 0;
   return delta + accumulate(x.children.begin(), x.children.end(), 0,
-                            [](int x, Tree_Node y) {
+                            [](int x, const Tree_Node& y) {
                               return x + smaller_than_100000(y);
                             });
 }
@@ -95,9 +96,11 @@ unsigned int bigger_than(Tree_Node x, unsigned int lim, unsigned int m) {
                     });
 }
 
-unsigned int soln1(Tree &tree) { return smaller_than_100000(tree.root); }
+unsigned int soln1(const Tree& tree) {
+  return smaller_than_100000(tree.root);
+}
 
-unsigned int soln2(Tree &tree) {
+unsigned int soln2(const Tree& tree) {
   unsigned int root_size = tree.root.children[0].size;
   return bigger_than(tree.root, root_size - 40000000, root_size);
 }
